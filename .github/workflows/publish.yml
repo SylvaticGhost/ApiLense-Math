@@ -1,0 +1,30 @@
+name: Publish
+on:
+  push:
+    branches:
+      - master
+  deployment:
+    types: [created]
+  workflow_dispatch: {}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Remove incompatible lockfile 
+        run: |
+          rm -f deno.lock
+
+      - name: Publish jsr package
+        run: deno task publish
